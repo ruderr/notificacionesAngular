@@ -1,27 +1,145 @@
-# Notificaciones
+# Angular 9 - Ejemplo de notificaciones Toaster
+## Toaster nos permite mostrar notificaciones de alerta: Success, Error, Warning e Info, como las que se muestran en esta imagen:
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.4.
+![Ejemplo Toaster](notificaciones_toaster.jpg)
 
-## Development server
+1. Creamos una nueva aplicación: `ng new notificaciones`
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+2. Instalamos Toaster:
 
-## Code scaffolding
+```
+npm install ngx-toastr --save
+npm install @angular/animations --save
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+3. En el archivo `angular.css` agregamos la ruta del toast.css:
 
-## Build
+```css3
+.....
+    "styles": [
+      "node_modules/ngx-toastr/toastr.css",
+      "src/styles.css"
+    ],
+.....
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+4. En el `src/app/app.module.ts` importamos los módulos necesarios:
 
-## Running unit tests
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+  
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+  
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+5. Creamos un nuevo servicio y lo llamamos: notificacion (notificacion.service.js):
 
-## Running end-to-end tests
+`ng generate service notification`
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+6. Abrimos el arvhivo `src/app/notification.service.ts`, importamos el toastr, lo inicializamos en el constructor y añadimos las funciones para cada tipo de notificación:
 
-## Further help
+```typescript
+import { Injectable } from '@angular/core';
+  
+import { ToastrService } from 'ngx-toastr';
+  
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationService {
+  
+  constructor(private toastr: ToastrService) { }
+  
+  showSuccess(message, title){
+      this.toastr.success(message, title)
+  }
+  
+  showError(message, title){
+      this.toastr.error(message, title)
+  }
+  
+  showInfo(message, title){
+      this.toastr.info(message, title)
+  }
+  
+  showWarning(message, title){
+      this.toastr.warning(message, title)
+  }
+  
+}
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+7. Para llamar a cada uno de los mensajes, agregamos los siguientes botones a la vista `src/app/app.component.html`:
+
+```html5
+<h1>Angular 9 - Ejemplo de notificaciones Toaster</h1>
+  
+<button (click)="showToasterSuccess()">
+    Success Toaster
+</button>
+  
+<button (click)="showToasterError()">
+    Error Toaster
+</button>
+  
+<button (click)="showToasterInfo()">
+    Info Toaster
+</button>
+  
+<button (click)="showToasterWarning()">
+    Warning Toaster
+</button>
+```
+
+8. En el `src/app/app.component.ts` importamos el servicio de notificación, y agregamos el llamado a las funciones de cada tipo de notificación:
+
+```typescript
+import { Component } from '@angular/core';
+  
+import { NotificationService } from './notification.service'
+  
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'toaster-not';
+  
+  constructor(private notifyService : NotificationService) { }
+  
+  showToasterSuccess(){
+      this.notifyService.showSuccess("Data shown successfully !!", "Notificación")
+  }
+  
+  showToasterError(){
+      this.notifyService.showError("Something is wrong", "Notificación")
+  }
+  
+  showToasterInfo(){
+      this.notifyService.showInfo("This is info", "Notificación")
+  }
+  
+  showToasterWarning(){
+      this.notifyService.showWarning("This is warning", "Notificación")
+  }
+}
+```
+
+9. Listo. Ahora ejecutamos el servidor: ng serve -o y hacemos click en cada botón para visualizar las notificaciones.
