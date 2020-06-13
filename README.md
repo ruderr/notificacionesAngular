@@ -142,4 +142,4 @@ export class AppComponent {
 }
 ```
 
-9. Listo. Ahora ejecutamos el servidor: ng serve -o y hacemos click en cada botón para visualizar las notificaciones.
+9. Listo. Ahora ejecutamos el servidor: `ng serve -o` y hacemos click en cada botón para visualizar las notificaciones.
